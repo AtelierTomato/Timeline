@@ -1,8 +1,8 @@
 ﻿Public Class Timeline
 	' Private list of entries
-	Private ReadOnly _entries As List(Of TimelineEntry)
+	Private _entries As List(Of TimelineEntry)
 	' Dictionary to map IDs to pixel offsets and lengths
-	Private ReadOnly _pixelData As Dictionary(Of String, (DateTimeOffset As Integer, Length As Integer))
+	Private ReadOnly _pixelData As Dictionary(Of String, (Offset As Integer, Length As Integer))
 	' Backing fields for global start and end dates
 	Private _startDate As DateTimeOffset
 	Private _endDate As DateTimeOffset
@@ -13,7 +13,7 @@
 			Return _entries
 		End Get
 	End Property
-	Public ReadOnly Property PixelData As IReadOnlyDictionary(Of String, (DateTimeOffset As Integer, Length As Integer))
+	Public ReadOnly Property PixelData As IReadOnlyDictionary(Of String, (Offset As Integer, Length As Integer))
 		Get
 			Return _pixelData
 		End Get
@@ -53,7 +53,7 @@
 									 .Select(Function(g) g.Key) _
 									 .ToList()
 		If duplicateIDs.Count <> 0 Then
-			Throw New ArgumentException($"Duplicate IDs detected: {String.Join(", ", duplicateIDs)}", NameOf(entries))
+			Throw New ArgumentException($"Duplicate IDs detected: {String.Join(", ", duplicateIDs)}.", NameOf(entries))
 		End If
 
 		' Clean up to free resources
@@ -80,6 +80,9 @@
 
 		' Add new entries to the list
 		_entries.AddRange(sortedEntries)
+
+		' Sort the entries in _entries
+		_entries = _entries.OrderBy(Function(e) e.StartDate).ToList()
 	End Sub
 
 	' Helper function to update global start or end date if needed
