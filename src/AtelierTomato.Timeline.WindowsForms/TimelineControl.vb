@@ -102,7 +102,7 @@ Partial Public Class TimelineControl
 		For Each entry As TimelineEntry In _timeline.Entries
 			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier - scrollOffset
 			Dim y As Integer = monthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars)
-			Dim width As Integer = _timeline.GraphData(entry.ID).Length * BarLengthMultiplier
+			Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
 			Dim height As Integer = BarHeight
 
 			' Draw a rectangle for each timeline entry

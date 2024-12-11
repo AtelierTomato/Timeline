@@ -67,16 +67,16 @@
 		duplicateIDs = Nothing
 
 		' Sort entries by start date
-		Dim sortedEntries = entries.OrderBy(Function(e) e.StartDate).ToList()
+		Dim sortedByEarliestDateEntries = entries.OrderBy(Function(e) e.StartDate).ToList()
 
 		' Check for changes to start and end dates
-		Dim earliestDate = sortedEntries.First().StartDate
-		Dim latestDate = sortedEntries.Last().EndDate
+		Dim earliestDate = sortedByEarliestDateEntries.First().StartDate
+		Dim latestDate = entries.OrderBy(Function(e) e.EndDate).Last().EndDate
 		Dim startDateChanged = UpdateGlobalDateIfNeeded(earliestDate, True)
 		UpdateGlobalDateIfNeeded(latestDate, False)
 
 		' Add new entries to the list
-		_entries.AddRange(sortedEntries)
+		_entries.AddRange(sortedByEarliestDateEntries)
 
 		' Sort the entries in _entries
 		_entries = _entries.OrderBy(Function(e) e.StartDate).ToList()
@@ -84,7 +84,7 @@
 		If startDateChanged Then
 			CalculateGraphData(_entries)
 		Else
-			CalculateGraphData(sortedEntries)
+			CalculateGraphData(sortedByEarliestDateEntries)
 		End If
 	End Sub
 
