@@ -1,4 +1,4 @@
-﻿Partial Class TimelineControl
+﻿Partial Public Class TimelineControl
     ' Designer-controlled components
     Private components As System.ComponentModel.IContainer
 

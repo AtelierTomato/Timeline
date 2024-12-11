@@ -1,7 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports AtelierTomato.Timeline.Core
 
-Partial Class TimelineControl
+Partial Public Class TimelineControl
 	Inherits UserControl
 
 	Private _timeline As Core.Timeline
@@ -42,7 +42,7 @@ Partial Class TimelineControl
 	Public Property PaddingBetweenBars As Integer = 5
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
-	Public Property BarLengthMultiplier As Integer = 1
+	Public Property BarLengthMultiplier As Integer = 2
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property MonthLabelFont As Font = New Font("Arial", 8)
@@ -51,7 +51,7 @@ Partial Class TimelineControl
 	Public Property MonthLabelColor As Color = Color.Black
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
-	Public Property PaddingAboveBars As Integer = 10
+	Public Property PaddingAboveBars As Integer = 50
 
 	Protected Overrides Sub OnPaint(e As PaintEventArgs)
 		MyBase.OnPaint(e)
@@ -65,10 +65,13 @@ Partial Class TimelineControl
 		' Set up drawing parameters
 		Dim pen As New Pen(Color.Black)
 
+		' Get the current horizontal scroll position
+		Dim scrollOffset As Integer = -Me.AutoScrollPosition.X
+
 		' Draw the month labels above the graph
 		Dim currentMonth As DateTimeOffset = New DateTimeOffset(_timeline.StartDate.Year, _timeline.StartDate.Month, 1, 0, 0, 0, _timeline.StartDate.Offset)
 		Dim daysOffset As Integer = _timeline.StartDate.Day - 1
-		Dim monthX As Integer = 0
+		Dim monthX As Integer = 0 - scrollOffset
 		Dim monthLabelHeight As Integer = 20
 		Dim monthY As Integer = PaddingAboveBars
 
@@ -83,7 +86,7 @@ Partial Class TimelineControl
 			g.DrawLine(pen, monthX, monthY + textSize.Height, monthX, Me.ClientSize.Height)
 
 			' Add pixels for the number of days in the current month
-			monthX += DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * BarLengthMultiplier
+			monthX += (DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * BarLengthMultiplier)
 
 			' Increment the currentMonth to the next month
 			currentMonth = currentMonth.AddMonths(1)
@@ -93,25 +96,27 @@ Partial Class TimelineControl
 		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + monthLabelHeight
 
 		' Update AutoScrollMinSize to ensure it fits everything
-		Me.AutoScrollMinSize = New Size(monthX, requiredHeight)
+		Me.AutoScrollMinSize = New Size(monthX + scrollOffset, requiredHeight)
 
 		' Draw a bar for each entry in the Timeline
 		For Each entry As TimelineEntry In _timeline.Entries
-			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier
-			Dim y As Integer = PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars)
+			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier - scrollOffset
+			Dim y As Integer = monthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars)
 			Dim width As Integer = _timeline.GraphData(entry.ID).Length * BarLengthMultiplier
 			Dim height As Integer = BarHeight
 
 			' Draw a rectangle for each timeline entry
-			g.FillRectangle(New SolidBrush(BarColor), x, y, width, height)
-			g.DrawRectangle(pen, x, y, width, height)
+			If x + width >= 0 AndAlso x <= Me.ClientSize.Width Then
+				g.FillRectangle(New SolidBrush(BarColor), x, y, width, height)
+				g.DrawRectangle(pen, x, y, width, height)
 
-			' Draw the name of the entry on the bar
-			Dim entryName As String = entry.Name
-			Dim textSize As SizeF = g.MeasureString(entryName, BarFont)
-			Dim textX As Integer = x + (width - textSize.Width) / 2
-			Dim textY As Integer = y + (height - textSize.Height) / 2
-			g.DrawString(entryName, BarFont, New SolidBrush(BarTextcolor), textX, textY)
+				' Draw the name of the entry on the bar
+				Dim entryName As String = entry.Name
+				Dim textSize As SizeF = g.MeasureString(entryName, BarFont)
+				Dim textX As Integer = x + (width - textSize.Width) / 2
+				Dim textY As Integer = y + (height - textSize.Height) / 2
+				g.DrawString(entryName, BarFont, New SolidBrush(BarTextcolor), textX, textY)
+			End If
 		Next
 	End Sub
 
