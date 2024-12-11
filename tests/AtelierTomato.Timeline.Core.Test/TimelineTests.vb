@@ -31,18 +31,13 @@ Public Class TimelineTests
 		' Overall StartDate and EndDate are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData is made for each entry and is correct
-		timeline.PixelData.Count.Should.Be(5)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
+		' GraphData is made for each entry and is correct
+		timeline.GraphData.Count.Should.Be(5)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
 	End Sub
 
 	<Fact>
@@ -82,18 +77,13 @@ Public Class TimelineTests
 		' Overall StartDate and EndDate are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData is made for each entry and is correct
-		timeline.PixelData.Count.Should.Be(5)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
+		' GraphData is made for each entry and is correct
+		timeline.GraphData.Count.Should.Be(5)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
 
 		' Add an extra entry
 		timeline.AddEntry(extraEntry)
@@ -110,20 +100,14 @@ Public Class TimelineTests
 		' Overall StartDate and EndDate have not changed
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData has been updated to include extraEntry and the data for prior entries have not changed
-		timeline.PixelData.Count.Should.Be(6)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
-		timeline.PixelData("6").Offset.Should.Be(16661)
-		timeline.PixelData("6").Length.Should.Be(983)
+		' GraphData has been updated to include extraEntry and only the StackLevel for prior entries has changed
+		timeline.GraphData.Count.Should.Be(6)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
+		timeline.GraphData("6").Should.BeEquivalentTo(New TimelineEntryGraphData(16661, 983, 1))
 	End Sub
 
 	<Fact>
@@ -142,18 +126,13 @@ Public Class TimelineTests
 		' Overall StartDate and EndDate are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData is made for each entry and is correct
-		timeline.PixelData.Count.Should.Be(5)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
+		' GraphData is made for each entry and is correct
+		timeline.GraphData.Count.Should.Be(5)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
 
 		' Add an earlier entry
 		timeline.AddEntry(earlierEntry)
@@ -170,20 +149,14 @@ Public Class TimelineTests
 		' Overall StartDate has changed, but EndDate has not
 		timeline.StartDate.Should.Be(earlierEntry.StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData has been updated to include earlierEntry, and the Offset (but not the length) of all entries should have changed
-		timeline.PixelData.Count.Should.Be(6)
-		timeline.PixelData("1").Offset.Should.Be(12302 + 7816)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016 + 7816)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071 + 7816)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076 + 7816)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(7816)
-		timeline.PixelData("5").Length.Should.Be(16627)
-		timeline.PixelData("7").Offset.Should.Be(0)
-		timeline.PixelData("7").Length.Should.Be(24516)
+		' GraphData has been updated to include earlierEntry, and the Offset (but not the length) of all entries should have changed, along with some StackLevels.
+		timeline.GraphData.Count.Should.Be(6)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302 + 7816, 3512, 3))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016 + 7816, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071 + 7816, 4162, 3))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076 + 7816, 1556, 3))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(7816, 16627, 2))
+		timeline.GraphData("7").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 24516, 1))
 	End Sub
 
 	<Fact>
@@ -202,18 +175,13 @@ Public Class TimelineTests
 		' Overall StartDate and EndDate are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
-		' PixelData is made for each entry and is correct
-		timeline.PixelData.Count.Should.Be(5)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
+		' GraphData is made for each entry and is correct
+		timeline.GraphData.Count.Should.Be(5)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
 
 		' Add an earlier entry
 		timeline.AddEntry(laterEntry)
@@ -230,20 +198,14 @@ Public Class TimelineTests
 		' Overall EndDate has changed, but StartDate has not
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(laterEntry.EndDate)
-		' PixelData has been updated to include laterEntry and the data for prior entries have not changed
-		timeline.PixelData.Count.Should.Be(6)
-		timeline.PixelData("1").Offset.Should.Be(12302)
-		timeline.PixelData("1").Length.Should.Be(3512)
-		timeline.PixelData("2").Offset.Should.Be(18016)
-		timeline.PixelData("2").Length.Should.Be(374)
-		timeline.PixelData("3").Offset.Should.Be(4071)
-		timeline.PixelData("3").Length.Should.Be(4162)
-		timeline.PixelData("4").Offset.Should.Be(16076)
-		timeline.PixelData("4").Length.Should.Be(1556)
-		timeline.PixelData("5").Offset.Should.Be(0)
-		timeline.PixelData("5").Length.Should.Be(16627)
-		timeline.PixelData("8").Offset.Should.Be(16482)
-		timeline.PixelData("8").Length.Should.Be(4136)
+		' GraphData has been updated to include laterEntry and the data for prior entries has not changed
+		timeline.GraphData.Count.Should.Be(6)
+		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
+		timeline.GraphData("2").Should.BeEquivalentTo(New TimelineEntryGraphData(18016, 374, 1))
+		timeline.GraphData("3").Should.BeEquivalentTo(New TimelineEntryGraphData(4071, 4162, 2))
+		timeline.GraphData("4").Should.BeEquivalentTo(New TimelineEntryGraphData(16076, 1556, 2))
+		timeline.GraphData("5").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 16627, 1))
+		timeline.GraphData("8").Should.BeEquivalentTo(New TimelineEntryGraphData(16482, 4136, 3))
 	End Sub
 
 	<Fact>
@@ -255,8 +217,7 @@ Public Class TimelineTests
 		timeline.Entries(0).Should.BeEquivalentTo(sameDayEntry)
 		timeline.StartDate.Should.Be(sameDayEntry.StartDate)
 		timeline.EndDate.Should.Be(sameDayEntry.EndDate)
-		timeline.PixelData.Count.Should.Be(1)
-		timeline.PixelData("9").Offset.Should.Be(0)
-		timeline.PixelData("9").Length.Should.Be(1)
+		timeline.GraphData.Count.Should.Be(1)
+		timeline.GraphData("9").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 1, 1))
 	End Sub
 End Class
