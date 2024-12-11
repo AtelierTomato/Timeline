@@ -16,7 +16,7 @@ Public Class TimelineEntryTests
 
 	<Fact>
 	Sub StartDateIsBeforeEndDatePassTest()
-		Dim entry = New TimelineEntry("1", "name", earlierDate, laterDate)
+		Dim entry As New TimelineEntry("1", "name", earlierDate, laterDate)
 
 		entry.ID.Should.Be("1")
 		entry.Name.Should.Be("name")
@@ -26,8 +26,8 @@ Public Class TimelineEntryTests
 
 	<Fact>
 	Sub SameDatePassTest()
-		Dim day As DateTimeOffset = New DateTimeOffset(2024, 12, 25, 0, 0, 0, TimeSpan.Zero)
-		Dim entry = New TimelineEntry("1", "name", day, day)
+		Dim day As New DateTimeOffset(2024, 12, 25, 0, 0, 0, TimeSpan.Zero)
+		Dim entry As New TimelineEntry("1", "name", day, day)
 
 		entry.ID.Should.Be("1")
 		entry.Name.Should.Be("name")

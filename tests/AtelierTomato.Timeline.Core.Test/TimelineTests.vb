@@ -28,9 +28,10 @@ Public Class TimelineTests
 		timeline.Entries(2).Should.BeEquivalentTo(entries(0))
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate and EndDate are correctly calculated
+		' Overall StartDate, EndDate, and MaxStackLevel are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(2)
 		' GraphData is made for each entry and is correct
 		timeline.GraphData.Count.Should.Be(5)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -74,9 +75,10 @@ Public Class TimelineTests
 		timeline.Entries(2).Should.BeEquivalentTo(entries(0))
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate and EndDate are correctly calculated
+		' Overall StartDate, EndDate, and MaxStackLevel are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(2)
 		' GraphData is made for each entry and is correct
 		timeline.GraphData.Count.Should.Be(5)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -97,9 +99,10 @@ Public Class TimelineTests
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(extraEntry)
 		timeline.Entries(5).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate and EndDate have not changed
+		' Overall StartDate, EndDate, and StackLevel have not changed
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(2)
 		' GraphData has been updated to include extraEntry and only the StackLevel for prior entries has changed
 		timeline.GraphData.Count.Should.Be(6)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -123,9 +126,10 @@ Public Class TimelineTests
 		timeline.Entries(2).Should.BeEquivalentTo(entries(0))
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate and EndDate are correctly calculated
+		' Overall StartDate, EndDate, and MaxStackLevel are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(2)
 		' GraphData is made for each entry and is correct
 		timeline.GraphData.Count.Should.Be(5)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -146,9 +150,10 @@ Public Class TimelineTests
 		timeline.Entries(3).Should.BeEquivalentTo(entries(0))
 		timeline.Entries(4).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(5).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate has changed, but EndDate has not
+		' Overall StartDate and MaxStackLevel have changed, but EndDate has not
 		timeline.StartDate.Should.Be(earlierEntry.StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(3)
 		' GraphData has been updated to include earlierEntry, and the Offset (but not the length) of all entries should have changed, along with some StackLevels.
 		timeline.GraphData.Count.Should.Be(6)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302 + 7816, 3512, 3))
@@ -172,9 +177,10 @@ Public Class TimelineTests
 		timeline.Entries(2).Should.BeEquivalentTo(entries(0))
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(entries(1))
-		' Overall StartDate and EndDate are correctly calculated
+		' Overall StartDate, EndDate, and MaxStackLevel are correctly calculated
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(entries(1).EndDate)
+		timeline.MaxStackLevel.Should.Be(2)
 		' GraphData is made for each entry and is correct
 		timeline.GraphData.Count.Should.Be(5)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -195,9 +201,10 @@ Public Class TimelineTests
 		timeline.Entries(3).Should.BeEquivalentTo(entries(3))
 		timeline.Entries(4).Should.BeEquivalentTo(laterEntry)
 		timeline.Entries(5).Should.BeEquivalentTo(entries(1))
-		' Overall EndDate has changed, but StartDate has not
+		' Overall EndDate and MaxStackLevel have changed, but StartDate has not
 		timeline.StartDate.Should.Be(entries(4).StartDate)
 		timeline.EndDate.Should.Be(laterEntry.EndDate)
+		timeline.MaxStackLevel.Should.Be(3)
 		' GraphData has been updated to include laterEntry and the data for prior entries has not changed
 		timeline.GraphData.Count.Should.Be(6)
 		timeline.GraphData("1").Should.BeEquivalentTo(New TimelineEntryGraphData(12302, 3512, 2))
@@ -217,6 +224,7 @@ Public Class TimelineTests
 		timeline.Entries(0).Should.BeEquivalentTo(sameDayEntry)
 		timeline.StartDate.Should.Be(sameDayEntry.StartDate)
 		timeline.EndDate.Should.Be(sameDayEntry.EndDate)
+		timeline.MaxStackLevel.Should.Be(1)
 		timeline.GraphData.Count.Should.Be(1)
 		timeline.GraphData("9").Should.BeEquivalentTo(New TimelineEntryGraphData(0, 1, 1))
 	End Sub

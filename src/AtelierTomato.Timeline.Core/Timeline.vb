@@ -3,9 +3,10 @@
 	Private _entries As List(Of TimelineEntry)
 	' Dictionary to map IDs to pixel offsets and lengths
 	Private ReadOnly _graphData As Dictionary(Of String, TimelineEntryGraphData)
-	' Backing fields for global start and end dates
+	' Backing fields for global start and end dates and max stack level
 	Private _startDate As DateTimeOffset
 	Private _endDate As DateTimeOffset
+	Private _maxStackLevel As Integer
 
 	' Public read-only access to private members
 	Public ReadOnly Property Entries As IReadOnlyList(Of TimelineEntry)
@@ -26,6 +27,11 @@
 	Public ReadOnly Property EndDate As DateTimeOffset
 		Get
 			Return _endDate
+		End Get
+	End Property
+	Public ReadOnly Property MaxStackLevel As Integer
+		Get
+			Return _maxStackLevel
 		End Get
 	End Property
 
@@ -102,6 +108,7 @@
 	Private Sub CalculateGraphData(entries As IEnumerable(Of TimelineEntry))
 		' List to track the stack levels currently in use
 		Dim occupiedStackLevels As New Dictionary(Of Integer, DateTimeOffset)()
+		Dim maxStackLevel As Integer = 0
 
 		' Iterate through each entry and assign stack level
 		For Each entry In _entries
@@ -129,7 +136,14 @@
 
 			' Store the end date for this stack level so we can track if it's freed
 			occupiedStackLevels(stackLevel) = entry.EndDate
+
+			' Check if current stackLevel is higher than maxStackLevel, if so, make maxStackLevel current stackLevel
+			If stackLevel > maxStackLevel Then
+				maxStackLevel = stackLevel
+			End If
 		Next
+		' Set _maxStackLevel to new max stack level
+		_maxStackLevel = maxStackLevel
 		For Each entry In entries
 			Dim result = CalculateGraphOffsetAndLength(entry)
 			If Not _graphData.ContainsKey(entry.ID) Then

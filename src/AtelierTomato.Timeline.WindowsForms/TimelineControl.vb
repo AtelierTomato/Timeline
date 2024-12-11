@@ -89,11 +89,8 @@ Partial Class TimelineControl
 			currentMonth = currentMonth.AddMonths(1)
 		End While
 
-		' Calculate the maximum stack level to determine required height
-		Dim maxStackLevel As Integer = _timeline.Entries.Max(Function(entry) _timeline.GraphData(entry.ID).StackLevel) ' TODO: make this a property of Timeline
-
 		' Calculate the total required height based on the max stack level
-		Dim requiredHeight As Integer = (maxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + monthLabelHeight
+		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + monthLabelHeight
 
 		' Update AutoScrollMinSize to ensure it fits everything
 		Me.AutoScrollMinSize = New Size(monthX, requiredHeight)
