@@ -66,14 +66,15 @@ Partial Public Class TimelineControl
 		Dim pen As New Pen(Color.Black)
 
 		' Get the current horizontal scroll position
-		Dim scrollOffset As Integer = -Me.AutoScrollPosition.X
+		Dim scrollOffsetX As Integer = -Me.AutoScrollPosition.X
+		Dim scrollOffsetY As Integer = -Me.AutoScrollPosition.Y
 
 		' Draw the month labels above the graph
 		Dim currentMonth As DateTimeOffset = New DateTimeOffset(_timeline.StartDate.Year, _timeline.StartDate.Month, 1, 0, 0, 0, _timeline.StartDate.Offset)
 		Dim daysOffset As Integer = _timeline.StartDate.Day - 1
-		Dim monthX As Integer = 0 - scrollOffset
+		Dim monthX As Integer = 0 - scrollOffsetX
 		Dim monthLabelHeight As Integer = 20
-		Dim monthY As Integer = PaddingAboveBars
+		Dim monthY As Integer = PaddingAboveBars - scrollOffsetY
 
 		' Loop through each month until the end date
 		While currentMonth <= _timeline.EndDate
@@ -96,12 +97,12 @@ Partial Public Class TimelineControl
 		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + monthLabelHeight
 
 		' Update AutoScrollMinSize to ensure it fits everything
-		Me.AutoScrollMinSize = New Size(monthX + scrollOffset, requiredHeight)
+		Me.AutoScrollMinSize = New Size(monthX + scrollOffsetX, requiredHeight)
 
 		' Draw a bar for each entry in the Timeline
 		For Each entry As TimelineEntry In _timeline.Entries
-			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier - scrollOffset
-			Dim y As Integer = monthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars)
+			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier - scrollOffsetX
+			Dim y As Integer = monthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) - scrollOffsetY
 			Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
 			Dim height As Integer = BarHeight
 
