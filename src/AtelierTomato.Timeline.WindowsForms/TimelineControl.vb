@@ -39,13 +39,16 @@ Partial Public Class TimelineControl
 	Public Property BarHeight As Integer = 20
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
-	Public Property PaddingBetweenBars As Integer = 5
+	Public Property PaddingBetweenBars As Integer = 0
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property BarLengthMultiplier As Integer = 2
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property MonthLabelFont As Font = New Font("Arial", 8)
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property MonthLabelHeight As Integer = 20
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property MonthLabelColor As Color = Color.Black
@@ -70,10 +73,9 @@ Partial Public Class TimelineControl
 		Dim scrollOffsetY As Integer = -Me.AutoScrollPosition.Y
 
 		' Draw the month labels above the graph
-		Dim currentMonth As DateTimeOffset = New DateTimeOffset(_timeline.StartDate.Year, _timeline.StartDate.Month, 1, 0, 0, 0, _timeline.StartDate.Offset)
+		Dim currentMonth As New DateTimeOffset(_timeline.StartDate.Year, _timeline.StartDate.Month, 1, 0, 0, 0, _timeline.StartDate.Offset)
 		Dim daysOffset As Integer = _timeline.StartDate.Day - 1
 		Dim monthX As Integer = 0 - scrollOffsetX
-		Dim monthLabelHeight As Integer = 20
 		Dim monthY As Integer = PaddingAboveBars - scrollOffsetY
 
 		' Loop through each month until the end date
@@ -94,7 +96,7 @@ Partial Public Class TimelineControl
 		End While
 
 		' Calculate the total required height based on the max stack level
-		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + monthLabelHeight
+		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (BarHeight + PaddingBetweenBars)) + PaddingAboveBars + MonthLabelHeight
 
 		' Update AutoScrollMinSize to ensure it fits everything
 		Me.AutoScrollMinSize = New Size(monthX + scrollOffsetX, requiredHeight)
@@ -102,7 +104,7 @@ Partial Public Class TimelineControl
 		' Draw a bar for each entry in the Timeline
 		For Each entry As TimelineEntry In _timeline.Entries
 			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + daysOffset) * BarLengthMultiplier - scrollOffsetX
-			Dim y As Integer = monthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) - scrollOffsetY
+			Dim y As Integer = MonthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) - scrollOffsetY
 			Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
 			Dim height As Integer = BarHeight
 
