@@ -6,9 +6,13 @@ Partial Public Class TimelineControl
 
 	Private _timeline As Core.Timeline
 	Private _scrollOffset As Point
+	Private myToolTip As New ToolTip()
+	Private lastToolTipText As String = String.Empty
+	Private lastToolTipLocation As Point
 
 	Public Sub New()
 		InitializeComponent()
+		Me.DoubleBuffered = True
 		_scrollOffset = Point.Empty
 	End Sub
 
@@ -77,8 +81,6 @@ Partial Public Class TimelineControl
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
 
-		Me.DoubleBuffered = True
-
 		' Set up drawing parameters
 		Dim pen As New Pen(Color.Black)
 
@@ -145,6 +147,38 @@ Partial Public Class TimelineControl
 			End If
 		Next
 	End Sub
+
+	Protected Overrides Sub OnMouseMove(ByVal e As MouseEventArgs)
+		' Update the tooltip state on mouse move
+		Dim hoverText As String = GetBarHoverText(e.Location)
+		If hoverText <> lastToolTipText OrElse e.Location <> lastToolTipLocation Then
+			If Not String.IsNullOrEmpty(hoverText) Then
+				Dim toolTipX As Integer = e.X + 15
+				Dim toolTipY As Integer = e.Y + 15
+				myToolTip.Show(hoverText, Me, toolTipX, toolTipY)
+			Else
+				myToolTip.Hide(Me)
+			End If
+			lastToolTipText = hoverText
+			lastToolTipLocation = e.Location
+		End If
+	End Sub
+
+	Private Function GetBarHoverText(mouseLocation As Point) As String
+		For Each entry As TimelineEntry In _timeline.Entries
+			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + _timeline.StartDate.Day - 1) * BarLengthMultiplier + Me.AutoScrollPosition.X
+			Dim y As Integer = MonthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) + Me.AutoScrollPosition.Y
+			Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
+			Dim height As Integer = BarHeight
+			Dim barRect As New Rectangle(x, y, width, height)
+
+			If barRect.Contains(mouseLocation) Then
+				Return $"{entry.Name} ({entry.StartDate:MM/dd/yyyy} - {entry.EndDate:MM/dd/yyyy})"
+			End If
+		Next
+
+		Return Nothing
+	End Function
 
 	<System.Diagnostics.DebuggerNonUserCode()>
 	Protected Overrides Sub Dispose(disposing As Boolean)
