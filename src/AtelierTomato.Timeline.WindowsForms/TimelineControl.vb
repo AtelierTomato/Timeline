@@ -105,7 +105,7 @@ Partial Public Class TimelineControl
 			g.DrawLine(pen, monthX, monthY + textSize.Height, monthX, Me.ClientSize.Height)
 
 			' Add pixels for the number of days in the current month
-			monthX += (DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * BarLengthMultiplier)
+			monthX += DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * BarLengthMultiplier
 
 			' Increment the currentMonth to the next month
 			currentMonth = currentMonth.AddMonths(1)
@@ -149,6 +149,8 @@ Partial Public Class TimelineControl
 	End Sub
 
 	Protected Overrides Sub OnMouseMove(ByVal e As MouseEventArgs)
+		MyBase.OnMouseMove(e)
+
 		' Update the tooltip state on mouse move
 		Dim hoverText As String = GetBarHoverText(e.Location)
 		If hoverText <> lastToolTipText OrElse e.Location <> lastToolTipLocation Then
@@ -156,8 +158,12 @@ Partial Public Class TimelineControl
 				Dim toolTipX As Integer = e.X + 15
 				Dim toolTipY As Integer = e.Y + 15
 				myToolTip.Show(hoverText, Me, toolTipX, toolTipY)
+				If BarClickedEvent IsNot Nothing Then
+					Me.Cursor = Cursors.Hand
+				End If
 			Else
 				myToolTip.Hide(Me)
+				Me.Cursor = Cursors.Default
 			End If
 			lastToolTipText = hoverText
 			lastToolTipLocation = e.Location
@@ -166,11 +172,7 @@ Partial Public Class TimelineControl
 
 	Private Function GetBarHoverText(mouseLocation As Point) As String
 		For Each entry As TimelineEntry In _timeline.Entries
-			Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + _timeline.StartDate.Day - 1) * BarLengthMultiplier + Me.AutoScrollPosition.X
-			Dim y As Integer = MonthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) + Me.AutoScrollPosition.Y
-			Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
-			Dim height As Integer = BarHeight
-			Dim barRect As New Rectangle(x, y, width, height)
+			Dim barRect As Rectangle = GetBarRectangle(entry)
 
 			If barRect.Contains(mouseLocation) Then
 				Return $"{entry.Name} ({entry.StartDate:MM/dd/yyyy} - {entry.EndDate:MM/dd/yyyy})"
@@ -179,6 +181,38 @@ Partial Public Class TimelineControl
 
 		Return Nothing
 	End Function
+
+
+	Protected Overrides Sub OnMouseClick(ByVal e As MouseEventArgs)
+		MyBase.OnMouseClick(e)
+
+		Dim clickedEntry As TimelineEntry = GetClickedEntry(e.Location)
+		If clickedEntry IsNot Nothing Then
+			RaiseEvent BarClicked(Me, New BarClickedEventArgs(clickedEntry))
+		End If
+	End Sub
+
+	Private Function GetClickedEntry(mouseLocation As Point) As TimelineEntry
+		For Each entry As TimelineEntry In _timeline.Entries
+			Dim barRect As Rectangle = GetBarRectangle(entry)
+
+			If barRect.Contains(mouseLocation) Then
+				Return entry
+			End If
+		Next
+		Return Nothing
+	End Function
+
+	Private Function GetBarRectangle(entry As TimelineEntry) As Rectangle
+		Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + _timeline.StartDate.Day - 1) * BarLengthMultiplier + Me.AutoScrollPosition.X
+		Dim y As Integer = MonthLabelHeight + PaddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (BarHeight + PaddingBetweenBars) + Me.AutoScrollPosition.Y
+		Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * BarLengthMultiplier
+		Dim height As Integer = BarHeight
+		Dim barRect As New Rectangle(x, y, width, height)
+		Return barRect
+	End Function
+
+	Public Event BarClicked As EventHandler(Of BarClickedEventArgs)
 
 	<System.Diagnostics.DebuggerNonUserCode()>
 	Protected Overrides Sub Dispose(disposing As Boolean)

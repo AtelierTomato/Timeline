@@ -30,13 +30,14 @@ Partial Class Form1
 		TimelineControl1.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
 		TimelineControl1.BackColor = Color.White
 		TimelineControl1.BarColor = Color.LightBlue
-		TimelineControl1.BarFont = New Font("Arial", 10.0F)
+		TimelineControl1.BarFont = New Font("Arial", 10F)
 		TimelineControl1.BarHeight = 20
 		TimelineControl1.BarLengthMultiplier = 2
 		TimelineControl1.BarTextcolor = Color.Black
 		TimelineControl1.Location = New Point(12, 12)
 		TimelineControl1.MonthLabelColor = Color.Black
-		TimelineControl1.MonthLabelFont = New Font("Arial", 8.0F)
+		TimelineControl1.MonthLabelFont = New Font("Arial", 8F)
+		TimelineControl1.MonthLabelHeight = 20
 		TimelineControl1.Name = "TimelineControl1"
 		TimelineControl1.PaddingAboveBars = 10
 		TimelineControl1.PaddingBetweenBars = 0
@@ -46,7 +47,7 @@ Partial Class Form1
 		' 
 		' Form1
 		' 
-		AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+		AutoScaleDimensions = New SizeF(7F, 15F)
 		AutoScaleMode = AutoScaleMode.Font
 		ClientSize = New Size(999, 619)
 		Controls.Add(TimelineControl1)

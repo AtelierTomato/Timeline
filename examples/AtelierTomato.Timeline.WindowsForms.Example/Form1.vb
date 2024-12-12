@@ -8,6 +8,7 @@ Public Class Form1
 		New TimelineEntry("4", "four", New DateTimeOffset(2014, 7, 12, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2014, 7, 23, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("5", "five", New DateTimeOffset(2014, 8, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2014, 8, 3, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("6", "six", New DateTimeOffset(2014, 7, 13, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2014, 7, 13, 0, 0, 0, TimeSpan.Zero)),
+		New TimelineEntry("6.2", "six.2", New DateTimeOffset(2014, 7, 14, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2014, 7, 14, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("7", "seven", New DateTimeOffset(2014, 7, 24, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("8", "eight", New DateTimeOffset(2015, 1, 2, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2016, 3, 4, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("9", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
@@ -29,7 +30,8 @@ Public Class Form1
 		New TimelineEntry("932", "nreqine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("934", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 		New TimelineEntry("954", "nir32ne", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
-		New TimelineEntry("914", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero))
+		New TimelineEntry("914", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
+		New TimelineEntry("83", "eight3", New DateTimeOffset(2014, 7, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 1, 20, 0, 0, 0, TimeSpan.Zero))
 	}
 
 	Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
