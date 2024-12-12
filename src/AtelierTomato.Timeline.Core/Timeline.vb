@@ -41,6 +41,20 @@
 		_startDate = DateTimeOffset.MaxValue    ' Initialize with a high value
 		_endDate = DateTimeOffset.MinValue      ' Initialize with a low value
 	End Sub
+	Public Sub New(entries As IEnumerable(Of TimelineEntry))
+		_entries = New List(Of TimelineEntry)()
+		_graphData = New Dictionary(Of String, TimelineEntryGraphData)()
+		_startDate = DateTimeOffset.MaxValue    ' Initialize with a high value
+		_endDate = DateTimeOffset.MinValue      ' Initialize with a low value
+		AddEntries(entries)
+	End Sub
+	Public Sub New(entry As TimelineEntry)
+		_entries = New List(Of TimelineEntry)()
+		_graphData = New Dictionary(Of String, TimelineEntryGraphData)()
+		_startDate = DateTimeOffset.MaxValue    ' Initialize with a high value
+		_endDate = DateTimeOffset.MinValue      ' Initialize with a low value
+		AddEntry(entry)
+	End Sub
 
 	' Add a single entry to the timeline
 	Public Sub AddEntry(entry As TimelineEntry)
