@@ -56,6 +56,18 @@ Partial Public Class TimelineControl
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
 	Public Property PaddingAboveBars As Integer = 50
 
+	Protected Overrides Sub OnResize(e As EventArgs)
+		MyBase.OnResize(e)
+		' Invalidate on resize so that text is redrawn in the center of what is visible of the bar
+		Invalidate()
+	End Sub
+
+	Protected Overrides Sub OnScroll(se As ScrollEventArgs)
+		MyBase.OnScroll(se)
+		' Invalidate on scroll so that text is redrawn in the center of what is visible of the bar
+		Invalidate()
+	End Sub
+
 	Protected Overrides Sub OnPaint(e As PaintEventArgs)
 		MyBase.OnPaint(e)
 
@@ -64,6 +76,8 @@ Partial Public Class TimelineControl
 		' Get the graphics object for drawing
 		Dim g As Graphics = e.Graphics
 		g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+
+		Me.DoubleBuffered = True
 
 		' Set up drawing parameters
 		Dim pen As New Pen(Color.Black)
@@ -116,7 +130,16 @@ Partial Public Class TimelineControl
 				' Draw the name of the entry on the bar
 				Dim entryName As String = entry.Name
 				Dim textSize As SizeF = g.MeasureString(entryName, BarFont)
-				Dim textX As Integer = x + (width - textSize.Width) / 2
+				' We want to draw the label on the center of what is on the screen, so that we can see bar labels at all times
+				Dim displayedXMin As Integer = x, displayedXMax As Integer = width
+				If x < 0 Then
+					displayedXMin -= x
+					displayedXMax += x
+				End If
+				If x + width > Me.Width Then
+					displayedXMax = Me.Width - displayedXMin
+				End If
+				Dim textX As Integer = displayedXMin + (displayedXMax - textSize.Width) / 2
 				Dim textY As Integer = y + (height - textSize.Height) / 2
 				g.DrawString(entryName, BarFont, New SolidBrush(BarTextcolor), textX, textY)
 			End If
