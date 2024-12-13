@@ -207,6 +207,30 @@ Partial Public Class TimelineControl
 			Invalidate()
 		End Set
 	End Property
+	Private _monthLabelPadding As New Padding(0)
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property MonthLabelPadding As Padding
+		Get
+			Return _monthLabelPadding
+		End Get
+		Set(value As Padding)
+			_monthLabelPadding = value
+			Invalidate()
+		End Set
+	End Property
+	Private _barLabelPadding As New Padding(3, 0, 0, 0)
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property BarLabelPadding As Padding
+		Get
+			Return _barLabelPadding
+		End Get
+		Set(value As Padding)
+			_barLabelPadding = value
+			Invalidate()
+		End Set
+	End Property
 
 	Protected Overrides Sub OnResize(e As EventArgs)
 		MyBase.OnResize(e)
@@ -244,18 +268,25 @@ Partial Public Class TimelineControl
 			' Define the width of the current month field
 			Dim monthWidth As Integer = DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * _barLengthPerDay
 
+			Dim paddedMonthRect As New Rectangle(
+				monthX + _monthLabelPadding.Left,
+				monthY + _monthLabelPadding.Top,
+				Math.Max(0, monthWidth - _monthLabelPadding.Left - _monthLabelPadding.Right),
+				Math.Max(0, _monthLabelHeight - _monthLabelPadding.Top - _monthLabelPadding.Bottom)
+			)
+
 			Dim monthStringFormat As New StringFormat
 			Dim monthTextX As Decimal
 			Select Case _monthLabelAlignment
 				Case ContentAlignment.TopLeft, ContentAlignment.MiddleLeft, ContentAlignment.BottomLeft
 					monthStringFormat.Alignment = StringAlignment.Near
-					monthTextX = monthX
+					monthTextX = paddedMonthRect.X
 				Case ContentAlignment.TopCenter, ContentAlignment.MiddleCenter, ContentAlignment.BottomCenter
 					monthStringFormat.Alignment = StringAlignment.Center
-					monthTextX = monthX + monthWidth / 2
+					monthTextX = paddedMonthRect.X + paddedMonthRect.Width / 2
 				Case ContentAlignment.TopRight, ContentAlignment.MiddleRight, ContentAlignment.BottomRight
 					monthStringFormat.Alignment = StringAlignment.Far
-					monthTextX = monthX + monthWidth
+					monthTextX = paddedMonthRect.X + paddedMonthRect.Width
 				Case Else
 					Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 			End Select
@@ -263,13 +294,13 @@ Partial Public Class TimelineControl
 			Select Case _monthLabelAlignment
 				Case ContentAlignment.TopLeft, ContentAlignment.TopCenter, ContentAlignment.TopRight
 					monthStringFormat.LineAlignment = StringAlignment.Near
-					monthTextY = monthY
+					monthTextY = paddedMonthRect.Y
 				Case ContentAlignment.MiddleLeft, ContentAlignment.MiddleCenter, ContentAlignment.MiddleRight
 					monthStringFormat.LineAlignment = StringAlignment.Center
-					monthTextY = monthY + _monthLabelHeight / 2
+					monthTextY = paddedMonthRect.Y + paddedMonthRect.Height / 2
 				Case ContentAlignment.BottomLeft, ContentAlignment.BottomCenter, ContentAlignment.BottomRight
 					monthStringFormat.LineAlignment = StringAlignment.Far
-					monthTextY = monthY + _monthLabelHeight
+					monthTextY = paddedMonthRect.Y + paddedMonthRect.Height
 				Case Else
 					Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 			End Select
@@ -321,8 +352,19 @@ Partial Public Class TimelineControl
 					visibleWidth += barRect.X
 				End If
 				If barRect.X + barRect.Width > Me.Width Then
-					visibleWidth = Me.Width - visibleX
+					If Me.VerticalScroll.Visible Then
+						visibleWidth = Me.Width - visibleX - SystemInformation.VerticalScrollBarWidth
+					Else
+						visibleWidth = Me.Width - visibleX
+					End If
 				End If
+
+				Dim paddedRect As New Rectangle(
+					visibleX + _barLabelPadding.Left,
+					barRect.Y + _barLabelPadding.Top,
+					Math.Max(0, visibleWidth - _barLabelPadding.Left - _barLabelPadding.Right),
+					Math.Max(0, barRect.Height - _barLabelPadding.Top - _barLabelPadding.Bottom)
+				)
 
 				' Truncate the name of the entry to fit on the bar
 				Dim truncatedName = TruncateText(entry.Name, visibleWidth, _barFont)
@@ -335,13 +377,13 @@ Partial Public Class TimelineControl
 				Select Case _barLabelAlignment
 					Case ContentAlignment.TopLeft, ContentAlignment.MiddleLeft, ContentAlignment.BottomLeft
 						stringFormat.Alignment = StringAlignment.Near
-						textX = visibleX
+						textX = paddedRect.X
 					Case ContentAlignment.TopCenter, ContentAlignment.MiddleCenter, ContentAlignment.BottomCenter
 						stringFormat.Alignment = StringAlignment.Center
-						textX = visibleX + visibleWidth / 2
+						textX = paddedRect.X + paddedRect.Width / 2
 					Case ContentAlignment.TopRight, ContentAlignment.MiddleRight, ContentAlignment.BottomRight
 						stringFormat.Alignment = StringAlignment.Far
-						textX = visibleX + visibleWidth
+						textX = paddedRect.X + paddedRect.Width
 					Case Else
 						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 				End Select
@@ -349,13 +391,13 @@ Partial Public Class TimelineControl
 				Select Case _barLabelAlignment
 					Case ContentAlignment.TopLeft, ContentAlignment.TopCenter, ContentAlignment.TopRight
 						stringFormat.LineAlignment = StringAlignment.Near
-						textY = barRect.Y
+						textY = paddedRect.Y
 					Case ContentAlignment.MiddleLeft, ContentAlignment.MiddleCenter, ContentAlignment.MiddleRight
 						stringFormat.LineAlignment = StringAlignment.Center
-						textY = barRect.Y + barRect.Height / 2
+						textY = paddedRect.Y + paddedRect.Height / 2
 					Case ContentAlignment.BottomLeft, ContentAlignment.BottomCenter, ContentAlignment.BottomRight
 						stringFormat.LineAlignment = StringAlignment.Far
-						textY = barRect.Y + _barHeight + _paddingBetweenBars
+						textY = paddedRect.Y + _barHeight + _paddingBetweenBars
 					Case Else
 						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 				End Select
@@ -431,7 +473,7 @@ Partial Public Class TimelineControl
 	Private Function TruncateText(text As String, availableWidth As Integer, font As Font) As String
 		Dim originalText = text
 		Dim size As SizeF = TextRenderer.MeasureText(text, font)
-		While size.Width > availableWidth
+		While size.Width > availableWidth AndAlso Not text.Length = 0
 			text = text.Substring(0, text.Length - 1)
 			size = TextRenderer.MeasureText(text, font)
 		End While

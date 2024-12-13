@@ -31,18 +31,17 @@ Partial Class Form1
 		' 
 		TimelineControl1.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
 		TimelineControl1.AutoSize = True
-		TimelineControl1.BackColor = Color.White
-		TimelineControl1.BarColor = Color.LightBlue
+		TimelineControl1.BackColor = Color.Blue
+		TimelineControl1.BarColor = Color.Orange
 		TimelineControl1.BarFont = New Font("Arial", 10.0F)
-		TimelineControl1.BarHeight = 20
 		TimelineControl1.BarLengthPerDay = 2
-		TimelineControl1.BarLineColor = Color.Black
-		TimelineControl1.BarTextcolor = Color.Black
+		TimelineControl1.BarLineColor = Color.Purple
+		TimelineControl1.BarTextcolor = Color.Red
 		TimelineControl1.BorderStyle = BorderStyle.FixedSingle
 		TimelineControl1.Location = New Point(12, 12)
-		TimelineControl1.MonthLabelColor = Color.Black
-		TimelineControl1.MonthLabelFont = New Font("Arial", 8.0F)
-		TimelineControl1.MonthLabelLineColor = Color.Black
+		TimelineControl1.MonthLabelColor = Color.Green
+		TimelineControl1.MonthLabelFont = New Font("Times New Roman", 8.0F)
+		TimelineControl1.MonthLabelLineColor = Color.Wheat
 		TimelineControl1.Name = "TimelineControl1"
 		TimelineControl1.PaddingBetweenBars = 0
 		TimelineControl1.Size = New Size(975, 595)
@@ -80,8 +79,6 @@ Partial Class Form1
 			New TimelineEntry("83", "eight3", New DateTimeOffset(2014, 7, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 1, 20, 0, 0, 0, TimeSpan.Zero))
 		})
 		TimelineControl1.DrawVerticalLine = VerticalLineMode.Full
-		TimelineControl1.BarLabelAlignment = ContentAlignment.MiddleLeft
-		TimelineControl1.MonthLabelAlignment = ContentAlignment.MiddleCenter
 		' 
 		' Form1
 		' 
