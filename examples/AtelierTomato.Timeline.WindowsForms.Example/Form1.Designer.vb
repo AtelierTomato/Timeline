@@ -42,10 +42,8 @@ Partial Class Form1
 		TimelineControl1.Location = New Point(12, 12)
 		TimelineControl1.MonthLabelColor = Color.Black
 		TimelineControl1.MonthLabelFont = New Font("Arial", 8.0F)
-		TimelineControl1.MonthLabelHeight = 20
 		TimelineControl1.MonthLabelLineColor = Color.Black
 		TimelineControl1.Name = "TimelineControl1"
-		TimelineControl1.PaddingAboveBars = 5
 		TimelineControl1.PaddingBetweenBars = 0
 		TimelineControl1.Size = New Size(975, 595)
 		TimelineControl1.TabIndex = 0
@@ -82,7 +80,8 @@ Partial Class Form1
 			New TimelineEntry("83", "eight3", New DateTimeOffset(2014, 7, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 1, 20, 0, 0, 0, TimeSpan.Zero))
 		})
 		TimelineControl1.DrawVerticalLine = VerticalLineMode.Full
-		TimelineControl1.BarLabelAlignment = ContentAlignment.BottomRight
+		TimelineControl1.BarLabelAlignment = ContentAlignment.MiddleLeft
+		TimelineControl1.MonthLabelAlignment = ContentAlignment.MiddleCenter
 		' 
 		' Form1
 		' 

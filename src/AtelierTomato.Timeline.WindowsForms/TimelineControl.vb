@@ -159,18 +159,6 @@ Partial Public Class TimelineControl
 			Invalidate()
 		End Set
 	End Property
-	Private _paddingAboveBars As Integer = 10
-	<Browsable(True)>
-	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
-	Public Property PaddingAboveBars As Integer
-		Get
-			Return _paddingAboveBars
-		End Get
-		Set(value As Integer)
-			_paddingAboveBars = value
-			Invalidate()
-		End Set
-	End Property
 	Private _drawVerticalLine As VerticalLineMode = VerticalLineMode.BelowMonthLabels
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
@@ -192,6 +180,18 @@ Partial Public Class TimelineControl
 		End Get
 		Set(value As Boolean)
 			_drawHorizontalLine = value
+			Invalidate()
+		End Set
+	End Property
+	Private _monthLabelAlignment As ContentAlignment = ContentAlignment.MiddleCenter
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property MonthLabelAlignment As ContentAlignment
+		Get
+			Return _monthLabelAlignment
+		End Get
+		Set(value As ContentAlignment)
+			_monthLabelAlignment = value
 			Invalidate()
 		End Set
 	End Property
@@ -233,14 +233,48 @@ Partial Public Class TimelineControl
 		Dim currentMonth As New DateTimeOffset(_timeline.StartDate.Year, _timeline.StartDate.Month, 1, 0, 0, 0, _timeline.StartDate.Offset)
 		Dim daysOffset As Integer = _timeline.StartDate.Day - 1
 		Dim monthX As Integer = Me.AutoScrollPosition.X
-		Dim monthY As Integer = _paddingAboveBars + Me.AutoScrollPosition.Y
+		Dim monthY As Integer = Me.AutoScrollPosition.Y
 
 		' Loop through each month until the end date
 		While currentMonth <= _timeline.EndDate
 			' Draw the month label at the X position
 			Dim monthLabel As String = currentMonth.ToString("MMM yyyy")
 			Dim textSize As SizeF = g.MeasureString(monthLabel, _monthLabelFont)
-			g.DrawString(monthLabel, _monthLabelFont, New SolidBrush(_monthLabelColor), monthX, monthY)
+
+			' Define the width of the current month field
+			Dim monthWidth As Integer = DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * _barLengthPerDay
+
+			Dim monthStringFormat As New StringFormat
+			Dim monthTextX As Decimal
+			Select Case _monthLabelAlignment
+				Case ContentAlignment.TopLeft, ContentAlignment.MiddleLeft, ContentAlignment.BottomLeft
+					monthStringFormat.Alignment = StringAlignment.Near
+					monthTextX = monthX
+				Case ContentAlignment.TopCenter, ContentAlignment.MiddleCenter, ContentAlignment.BottomCenter
+					monthStringFormat.Alignment = StringAlignment.Center
+					monthTextX = monthX + monthWidth / 2
+				Case ContentAlignment.TopRight, ContentAlignment.MiddleRight, ContentAlignment.BottomRight
+					monthStringFormat.Alignment = StringAlignment.Far
+					monthTextX = monthX + monthWidth
+				Case Else
+					Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
+			End Select
+			Dim monthTextY As Decimal
+			Select Case _monthLabelAlignment
+				Case ContentAlignment.TopLeft, ContentAlignment.TopCenter, ContentAlignment.TopRight
+					monthStringFormat.LineAlignment = StringAlignment.Near
+					monthTextY = monthY
+				Case ContentAlignment.MiddleLeft, ContentAlignment.MiddleCenter, ContentAlignment.MiddleRight
+					monthStringFormat.LineAlignment = StringAlignment.Center
+					monthTextY = monthY + _monthLabelHeight / 2
+				Case ContentAlignment.BottomLeft, ContentAlignment.BottomCenter, ContentAlignment.BottomRight
+					monthStringFormat.LineAlignment = StringAlignment.Far
+					monthTextY = monthY + _monthLabelHeight
+				Case Else
+					Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
+			End Select
+
+			g.DrawString(monthLabel, _monthLabelFont, New SolidBrush(_monthLabelColor), monthTextX, monthTextY, monthStringFormat)
 
 			Dim monthLabelLinePen As Pen = New Pen(_monthLabelLineColor)
 
@@ -253,19 +287,19 @@ Partial Public Class TimelineControl
 
 			' Draw a horizontal line under the month labels
 			If _drawHorizontalLine Then
-				Dim yPosition As Integer = _monthLabelHeight + _paddingAboveBars + Me.AutoScrollPosition.Y
+				Dim yPosition As Integer = _monthLabelHeight + Me.AutoScrollPosition.Y
 				g.DrawLine(monthLabelLinePen, 0, yPosition, Me.Width, yPosition)
 			End If
 
 			' Add pixels for the number of days in the current month
-			monthX += DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * _barLengthPerDay
+			monthX += monthWidth
 
 			' Increment the currentMonth to the next month
 			currentMonth = currentMonth.AddMonths(1)
 		End While
 
 		' Calculate the total required height based on the max stack level
-		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (_barHeight + _paddingBetweenBars)) + _paddingAboveBars + _monthLabelHeight
+		Dim requiredHeight As Integer = (_timeline.MaxStackLevel * (_barHeight + _paddingBetweenBars)) + _monthLabelHeight
 
 		' Update AutoScrollMinSize to ensure it fits everything
 		Me.AutoScrollMinSize = New Size(monthX - Me.AutoScrollPosition.X, requiredHeight)
@@ -280,7 +314,8 @@ Partial Public Class TimelineControl
 				g.DrawRectangle(New Pen(_barLineColor), barRect)
 
 				' We want to draw the label on the center of what is on the screen, so that we can see bar labels at all times
-				Dim visibleX As Integer = barRect.X, visibleWidth As Integer = barRect.Width
+				Dim visibleX As Integer = barRect.X
+				Dim visibleWidth As Integer = barRect.Width
 				If barRect.X < 0 Then
 					visibleX -= barRect.X
 					visibleWidth += barRect.X
@@ -295,29 +330,36 @@ Partial Public Class TimelineControl
 				' Draw the name of the entry on the bar
 				Dim textSize As SizeF = g.MeasureString(truncatedName, _barFont)
 
+				Dim stringFormat As New StringFormat
 				Dim textX As Decimal
 				Select Case _barLabelAlignment
 					Case ContentAlignment.TopLeft, ContentAlignment.MiddleLeft, ContentAlignment.BottomLeft
+						stringFormat.Alignment = StringAlignment.Near
 						textX = visibleX
 					Case ContentAlignment.TopCenter, ContentAlignment.MiddleCenter, ContentAlignment.BottomCenter
-						textX = visibleX + (visibleWidth - textSize.Width) / 2
+						stringFormat.Alignment = StringAlignment.Center
+						textX = visibleX + visibleWidth / 2
 					Case ContentAlignment.TopRight, ContentAlignment.MiddleRight, ContentAlignment.BottomRight
-						textX = visibleX + visibleWidth - textSize.Width
+						stringFormat.Alignment = StringAlignment.Far
+						textX = visibleX + visibleWidth
 					Case Else
 						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 				End Select
 				Dim textY As Decimal
 				Select Case _barLabelAlignment
 					Case ContentAlignment.TopLeft, ContentAlignment.TopCenter, ContentAlignment.TopRight
+						stringFormat.LineAlignment = StringAlignment.Near
 						textY = barRect.Y
 					Case ContentAlignment.MiddleLeft, ContentAlignment.MiddleCenter, ContentAlignment.MiddleRight
-						textY = barRect.Y + (barRect.Height - textSize.Height) / 2
+						stringFormat.LineAlignment = StringAlignment.Center
+						textY = barRect.Y + barRect.Height / 2
 					Case ContentAlignment.BottomLeft, ContentAlignment.BottomCenter, ContentAlignment.BottomRight
-						textY = barRect.Y + barRect.Height - textSize.Height
+						stringFormat.LineAlignment = StringAlignment.Far
+						textY = barRect.Y + _barHeight + _paddingBetweenBars
 					Case Else
 						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
 				End Select
-				g.DrawString(truncatedName, _barFont, New SolidBrush(_barTextColor), textX, textY)
+				g.DrawString(truncatedName, _barFont, New SolidBrush(_barTextColor), textX, textY, stringFormat)
 			End If
 		Next
 	End Sub
@@ -379,7 +421,7 @@ Partial Public Class TimelineControl
 
 	Private Function GetBarRectangle(entry As TimelineEntry) As Rectangle
 		Dim x As Integer = (_timeline.GraphData(entry.ID).Offset + _timeline.StartDate.Day - 1) * _barLengthPerDay + Me.AutoScrollPosition.X
-		Dim y As Integer = _monthLabelHeight + _paddingAboveBars + (_timeline.GraphData(entry.ID).StackLevel - 1) * (_barHeight + _paddingBetweenBars) + Me.AutoScrollPosition.Y
+		Dim y As Integer = _monthLabelHeight + (_timeline.GraphData(entry.ID).StackLevel - 1) * (_barHeight + _paddingBetweenBars) + Me.AutoScrollPosition.Y
 		Dim width As Integer = (_timeline.GraphData(entry.ID).Length + 1) * _barLengthPerDay
 		Dim height As Integer = _barHeight
 		Dim barRect As New Rectangle(x, y, width, height)
@@ -388,7 +430,7 @@ Partial Public Class TimelineControl
 
 	Private Function TruncateText(text As String, availableWidth As Integer, font As Font) As String
 		Dim originalText = text
-		Dim size As Size = TextRenderer.MeasureText(text, font)
+		Dim size As SizeF = TextRenderer.MeasureText(text, font)
 		While size.Width > availableWidth
 			text = text.Substring(0, text.Length - 1)
 			size = TextRenderer.MeasureText(text, font)
