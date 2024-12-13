@@ -83,7 +83,7 @@ Partial Public Class TimelineControl
 			Return _barHeight
 		End Get
 		Set(value As Integer)
-			_barHeight = value
+			_barHeight = Math.Max(value, 1)
 			Invalidate()
 		End Set
 	End Property
@@ -95,7 +95,7 @@ Partial Public Class TimelineControl
 			Return _paddingBetweenBars
 		End Get
 		Set(value As Integer)
-			_paddingBetweenBars = value
+			_paddingBetweenBars = Math.Max(value, 0)
 			Invalidate()
 		End Set
 	End Property
@@ -107,7 +107,7 @@ Partial Public Class TimelineControl
 			Return _barLengthPerDay
 		End Get
 		Set(value As Integer)
-			_barLengthPerDay = value
+			_barLengthPerDay = Math.Max(value, 1)
 			Invalidate()
 		End Set
 	End Property
@@ -131,7 +131,7 @@ Partial Public Class TimelineControl
 			Return _monthLabelHeight
 		End Get
 		Set(value As Integer)
-			_monthLabelHeight = value
+			_monthLabelHeight = Math.Max(value, 0)
 			Invalidate()
 		End Set
 	End Property
