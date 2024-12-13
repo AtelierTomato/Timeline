@@ -75,12 +75,14 @@ Partial Class Form1
 			New TimelineEntry("911", "ni413ne", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("922", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("91", "nineqr", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
-			New TimelineEntry("932", "nreqine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
+			New TimelineEntry("932", "nreqine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 31, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("934", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("954", "nir32ne", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("914", "nine", New DateTimeOffset(2015, 1, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 5, 20, 0, 0, 0, TimeSpan.Zero)),
 			New TimelineEntry("83", "eight3", New DateTimeOffset(2014, 7, 1, 0, 0, 0, TimeSpan.Zero), New DateTimeOffset(2015, 1, 20, 0, 0, 0, TimeSpan.Zero))
 		})
+		TimelineControl1.DrawVerticalLine = VerticalLineMode.Full
+		TimelineControl1.BarLabelAlignment = ContentAlignment.BottomRight
 		' 
 		' Form1
 		' 

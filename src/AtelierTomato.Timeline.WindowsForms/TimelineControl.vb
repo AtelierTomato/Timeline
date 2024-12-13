@@ -171,6 +171,30 @@ Partial Public Class TimelineControl
 			Invalidate()
 		End Set
 	End Property
+	Private _drawVerticalLine As VerticalLineMode = VerticalLineMode.BelowMonthLabels
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property DrawVerticalLine As VerticalLineMode
+		Get
+			Return _drawVerticalLine
+		End Get
+		Set(value As VerticalLineMode)
+			_drawVerticalLine = value
+			Invalidate()
+		End Set
+	End Property
+	Private _barLabelAlignment As ContentAlignment = ContentAlignment.MiddleLeft
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property BarLabelAlignment As ContentAlignment
+		Get
+			Return _barLabelAlignment
+		End Get
+		Set(value As ContentAlignment)
+			_barLabelAlignment = value
+			Invalidate()
+		End Set
+	End Property
 
 	Protected Overrides Sub OnResize(e As EventArgs)
 		MyBase.OnResize(e)
@@ -206,8 +230,12 @@ Partial Public Class TimelineControl
 			Dim textSize As SizeF = g.MeasureString(monthLabel, _monthLabelFont)
 			g.DrawString(monthLabel, _monthLabelFont, New SolidBrush(_monthLabelColor), monthX, monthY)
 
-			' Draw a vertical line under the label for the month's start position
+			' Draw a vertical line splitting the labels
+			If _drawVerticalLine = VerticalLineMode.BelowMonthLabels Then
 			g.DrawLine(New Pen(_monthLabelLineColor), monthX, monthY + textSize.Height, monthX, Me.ClientSize.Height)
+			ElseIf _drawVerticalLine = VerticalLineMode.Full Then
+				g.DrawLine(New Pen(_monthLabelLineColor), monthX, 0, monthX, Me.ClientSize.Height)
+			End If
 
 			' Add pixels for the number of days in the current month
 			monthX += DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month) * _barLengthPerDay
@@ -228,24 +256,48 @@ Partial Public Class TimelineControl
 
 			' Draw a rectangle for each timeline entry
 			If barRect.X + barRect.Width >= 0 AndAlso barRect.X <= Me.ClientSize.Width Then
-				g.FillRectangle(New SolidBrush(_barColor), barRect.X, barRect.Y, barRect.Width, barRect.Height)
-				g.DrawRectangle(New Pen(_barLineColor), barRect.X, barRect.Y, barRect.Width, barRect.Height)
+				g.FillRectangle(New SolidBrush(_barColor), barRect)
+				g.DrawRectangle(New Pen(_barLineColor), barRect)
 
-				' Draw the name of the entry on the bar
-				Dim entryName As String = entry.Name
-				Dim textSize As SizeF = g.MeasureString(entryName, _barFont)
 				' We want to draw the label on the center of what is on the screen, so that we can see bar labels at all times
-				Dim displayedXMin As Integer = barRect.X, displayedXMax As Integer = barRect.Width
+				Dim visibleX As Integer = barRect.X, visibleWidth As Integer = barRect.Width
 				If barRect.X < 0 Then
-					displayedXMin -= barRect.X
-					displayedXMax += barRect.X
+					visibleX -= barRect.X
+					visibleWidth += barRect.X
 				End If
 				If barRect.X + barRect.Width > Me.Width Then
-					displayedXMax = Me.Width - displayedXMin
+					visibleWidth = Me.Width - visibleX
 				End If
-				Dim textX As Integer = displayedXMin + (displayedXMax - textSize.Width) / 2
-				Dim textY As Integer = barRect.Y + (barRect.Height - textSize.Height) / 2
-				g.DrawString(entryName, _barFont, New SolidBrush(_barTextColor), textX, textY)
+
+				' Truncate the name of the entry to fit on the bar
+				Dim truncatedName = TruncateText(entry.Name, visibleWidth, _barFont)
+
+				' Draw the name of the entry on the bar
+				Dim textSize As SizeF = g.MeasureString(truncatedName, _barFont)
+
+				Dim textX As Decimal
+				Select Case _barLabelAlignment
+					Case ContentAlignment.TopLeft, ContentAlignment.MiddleLeft, ContentAlignment.BottomLeft
+						textX = visibleX
+					Case ContentAlignment.TopCenter, ContentAlignment.MiddleCenter, ContentAlignment.BottomCenter
+						textX = visibleX + (visibleWidth - textSize.Width) / 2
+					Case ContentAlignment.TopRight, ContentAlignment.MiddleRight, ContentAlignment.BottomRight
+						textX = visibleX + visibleWidth - textSize.Width
+					Case Else
+						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
+				End Select
+				Dim textY As Decimal
+				Select Case _barLabelAlignment
+					Case ContentAlignment.TopLeft, ContentAlignment.TopCenter, ContentAlignment.TopRight
+						textY = barRect.Y
+					Case ContentAlignment.MiddleLeft, ContentAlignment.MiddleCenter, ContentAlignment.MiddleRight
+						textY = barRect.Y + (barRect.Height - textSize.Height) / 2
+					Case ContentAlignment.BottomLeft, ContentAlignment.BottomCenter, ContentAlignment.BottomRight
+						textY = barRect.Y + barRect.Height - textSize.Height
+					Case Else
+						Throw New InvalidOperationException($"{NameOf(BarLabelAlignment)} was not set to a recognize {NameOf(ContentAlignment)} value.")
+				End Select
+				g.DrawString(truncatedName, _barFont, New SolidBrush(_barTextColor), textX, textY)
 			End If
 		Next
 	End Sub
@@ -312,6 +364,27 @@ Partial Public Class TimelineControl
 		Dim height As Integer = _barHeight
 		Dim barRect As New Rectangle(x, y, width, height)
 		Return barRect
+	End Function
+
+	Private Function TruncateText(text As String, availableWidth As Integer, font As Font) As String
+		Dim originalText = text
+		Dim size As Size = TextRenderer.MeasureText(text, font)
+		While size.Width > availableWidth
+			text = text.Substring(0, text.Length - 1)
+			size = TextRenderer.MeasureText(text, font)
+		End While
+		If text Is originalText OrElse text.Length = 0 Then
+			Return text
+		Else
+			While TextRenderer.MeasureText(text + "…", font).Width > availableWidth
+				text = text.Substring(0, text.Length - 1)
+				If text.Length = 0 Then
+					Return text
+				End If
+			End While
+			Return text + "…"
+		End If
+		Return text
 	End Function
 
 	Public Event BarClicked As EventHandler(Of BarClickedEventArgs)
