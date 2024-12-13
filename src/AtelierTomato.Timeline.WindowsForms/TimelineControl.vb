@@ -183,6 +183,18 @@ Partial Public Class TimelineControl
 			Invalidate()
 		End Set
 	End Property
+	Private _drawHorizontalLine As Boolean = True
+	<Browsable(True)>
+	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
+	Public Property DrawHorizontalLine As Boolean
+		Get
+			Return _drawHorizontalLine
+		End Get
+		Set(value As Boolean)
+			_drawHorizontalLine = value
+			Invalidate()
+		End Set
+	End Property
 	Private _barLabelAlignment As ContentAlignment = ContentAlignment.MiddleLeft
 	<Browsable(True)>
 	<DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)>
@@ -230,11 +242,19 @@ Partial Public Class TimelineControl
 			Dim textSize As SizeF = g.MeasureString(monthLabel, _monthLabelFont)
 			g.DrawString(monthLabel, _monthLabelFont, New SolidBrush(_monthLabelColor), monthX, monthY)
 
+			Dim monthLabelLinePen As Pen = New Pen(_monthLabelLineColor)
+
 			' Draw a vertical line splitting the labels
 			If _drawVerticalLine = VerticalLineMode.BelowMonthLabels Then
-			g.DrawLine(New Pen(_monthLabelLineColor), monthX, monthY + textSize.Height, monthX, Me.ClientSize.Height)
+				g.DrawLine(monthLabelLinePen, monthX, monthY + textSize.Height, monthX, ClientSize.Height)
 			ElseIf _drawVerticalLine = VerticalLineMode.Full Then
-				g.DrawLine(New Pen(_monthLabelLineColor), monthX, 0, monthX, Me.ClientSize.Height)
+				g.DrawLine(monthLabelLinePen, monthX, 0, monthX, ClientSize.Height)
+			End If
+
+			' Draw a horizontal line under the month labels
+			If _drawHorizontalLine Then
+				Dim yPosition As Integer = _monthLabelHeight + _paddingAboveBars + Me.AutoScrollPosition.Y
+				g.DrawLine(monthLabelLinePen, 0, yPosition, Me.Width, yPosition)
 			End If
 
 			' Add pixels for the number of days in the current month
