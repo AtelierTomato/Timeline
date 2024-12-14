@@ -58,6 +58,7 @@ Partial Class TimelineForm
 		AutoScaleMode = AutoScaleMode.Font
 		ClientSize = New Size(800, 450)
 		Controls.Add(timelineControl)
+		KeyPreview = True
 		Name = "TimelineForm"
 		Text = "Timeline"
 		ResumeLayout(False)

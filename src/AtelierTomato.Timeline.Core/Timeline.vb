@@ -211,7 +211,7 @@
 	' Calculate pixel data for a single entry
 	Private Function CalculateGraphOffsetAndLength(entry As TimelineEntry) As (Offset As Integer, Length As Integer)
 		Dim offset As Integer = (entry.StartDate - _startDate).Days
-		Dim length As Integer = Math.Max(1, (entry.EndDate - entry.StartDate).Days)
+		Dim length As Integer = (entry.EndDate - entry.StartDate).Days
 		Return (offset, length)
 	End Function
 End Class

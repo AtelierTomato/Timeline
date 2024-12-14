@@ -244,6 +244,12 @@ Partial Public Class TimelineControl
 		Invalidate()
 	End Sub
 
+	Protected Overrides Sub OnMouseWheel(e As MouseEventArgs)
+		MyBase.OnMouseWheel(e)
+		' Invalidate on mouse wheel scroll, for some reason it's not handled in OnScroll
+		Invalidate()
+	End Sub
+
 	Protected Overrides Sub OnPaint(e As PaintEventArgs)
 		MyBase.OnPaint(e)
 
@@ -446,7 +452,7 @@ Partial Public Class TimelineControl
 
 		Dim clickedEntry As TimelineEntry = GetClickedEntry(e.Location)
 		If clickedEntry IsNot Nothing Then
-			RaiseEvent BarClicked(Me, New BarClickedEventArgs(clickedEntry))
+			RaiseEvent BarClicked(Me, New BarClickedEventArgs(clickedEntry, e))
 		End If
 	End Sub
 

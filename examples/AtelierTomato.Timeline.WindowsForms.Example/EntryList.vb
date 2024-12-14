@@ -15,32 +15,7 @@ Public Class EntryList
 		Dim addEntryForm As New AddEntry()
 		If addEntryForm.ShowDialog() = DialogResult.OK Then
 			' Add the new entry to the list
-			If addEntryForm.Entry IsNot Nothing Then
-				If Entries.FirstOrDefault(Function(e) e.ID = addEntryForm.Entry.ID) IsNot Nothing Then
-					' If an entry with the same ID already exists, ask the user if they want to overwrite it
-					Dim result = MessageBox.Show("Duplicate ID detected, do you want to overwrite the conflicting entry?",
-												 "Duplicate ID Detected",
-												 MessageBoxButtons.YesNo,
-												 MessageBoxIcon.Warning
-					)
-
-					If result = DialogResult.Yes Then
-						' Remove the old entry and add the new one
-						Entries.RemoveAll(Function(e) e.ID = addEntryForm.Entry.ID)
-						Entries.Add(addEntryForm.Entry)
-						MessageBox.Show("Entry overwritten successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-						RefreshEntries()
-					Else
-						MessageBox.Show("Entry was not added.", "Operation Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information)
-					End If
-				Else
-					Entries.Add(addEntryForm.Entry)
-					MessageBox.Show("Entry added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-
-					RefreshEntries()
-				End If
-			End If
+			HandleAddEntryFormReturn(addEntryForm)
 		End If
 	End Sub
 
@@ -116,16 +91,49 @@ Public Class EntryList
 		If selectedEntry IsNot Nothing Then
 			' Open the AddEntry form and pass the selected entry's data
 			Dim addEntryForm As New AddEntry(selectedEntry)
-			addEntryForm.ShowDialog()
+			If addEntryForm.ShowDialog() = DialogResult.OK Then
+				' Add the new entry to the list
+				HandleAddEntryFormReturn(addEntryForm)
+			End If
 		End If
 	End Sub
 
 	Private Sub btnShowTimeline_Click(sender As Object, e As EventArgs) Handles btnShowTimeline.Click
 		Dim timelineForm As New TimelineForm(Entries)
-		timelineForm.Show()
+		timelineForm.ShowDialog()
+		RefreshEntries()
 	End Sub
 
 	Private Sub mnuFileExit_Click(sender As Object, e As EventArgs) Handles mnuFileExit.Click
 		Me.Close()
+	End Sub
+
+	Private Sub HandleAddEntryFormReturn(addEntryForm As AddEntry)
+		If addEntryForm.Entry IsNot Nothing Then
+			If Entries.FirstOrDefault(Function(e) e.ID = addEntryForm.Entry.ID) IsNot Nothing Then
+				' If an entry with the same ID already exists, ask the user if they want to overwrite it
+				Dim result = MessageBox.Show("Duplicate ID detected, do you want to overwrite the conflicting entry?",
+											 "Duplicate ID Detected",
+											 MessageBoxButtons.YesNo,
+											 MessageBoxIcon.Warning
+				)
+
+				If result = DialogResult.Yes Then
+					' Remove the old entry and add the new one
+					Entries.RemoveAll(Function(e) e.ID = addEntryForm.Entry.ID)
+					Entries.Add(addEntryForm.Entry)
+					MessageBox.Show("Entry overwritten successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+					RefreshEntries()
+				Else
+					MessageBox.Show("Entry was not added.", "Operation Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information)
+				End If
+			Else
+				Entries.Add(addEntryForm.Entry)
+				MessageBox.Show("Entry added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+				RefreshEntries()
+			End If
+		End If
 	End Sub
 End Class
