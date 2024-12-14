@@ -311,7 +311,7 @@ Partial Public Class TimelineControl
 
 			' Draw a vertical line splitting the labels
 			If _drawVerticalLine = VerticalLineMode.BelowMonthLabels Then
-				g.DrawLine(monthLabelLinePen, monthX, monthY + textSize.Height, monthX, ClientSize.Height)
+				g.DrawLine(monthLabelLinePen, monthX, _monthLabelHeight + Me.AutoScrollPosition.Y, monthX, ClientSize.Height)
 			ElseIf _drawVerticalLine = VerticalLineMode.Full Then
 				g.DrawLine(monthLabelLinePen, monthX, 0, monthX, ClientSize.Height)
 			End If
@@ -433,7 +433,7 @@ Partial Public Class TimelineControl
 			Dim barRect As Rectangle = GetBarRectangle(entry)
 
 			If barRect.Contains(mouseLocation) Then
-				Return $"{entry.Name} ({entry.StartDate:MM/dd/yyyy} - {entry.EndDate:MM/dd/yyyy})"
+				Return entry.ToString()
 			End If
 		Next
 

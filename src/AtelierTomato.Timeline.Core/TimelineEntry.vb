@@ -14,4 +14,8 @@
 		Me.StartDate = startDate
 		Me.EndDate = endDate
 	End Sub
+
+	Public Overrides Function ToString() As String
+		Return $"{Name} ({StartDate:yyyy.MM.dd} - {EndDate:yyyy.MM.dd})"
+	End Function
 End Class

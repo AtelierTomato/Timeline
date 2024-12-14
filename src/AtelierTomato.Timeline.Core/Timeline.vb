@@ -102,6 +102,38 @@
 		End If
 	End Sub
 
+	Public Sub RemoveEntry(id As String)
+		' Remove the entry via bulk method for consistency
+		RemoveEntries({id})
+	End Sub
+
+	Public Sub RemoveEntries(ids As IEnumerable(Of String))
+		' Check if there are any IDs to remove.
+		If Not ids.Any() Then Return
+
+		' Remove the entries from the _entries list
+		_entries.RemoveAll(Function(entry) ids.Contains(entry.ID))
+
+		' Remove the entries from the _graphData dictionary
+		For Each id In ids
+			If _graphData.ContainsKey(id) Then
+				_graphData.Remove(id)
+			End If
+		Next
+
+		' Recalculate the global start and end dates after removing entries
+		If _entries.Count <> 0 Then
+			_startDate = _entries.Min(Function(e) e.StartDate)
+			_endDate = _entries.Max(Function(e) e.EndDate)
+		Else
+			_startDate = DateTimeOffset.MaxValue
+			_endDate = DateTimeOffset.MinValue
+		End If
+
+		' Recalculate the graph data after removal
+		CalculateGraphData(_entries)
+	End Sub
+
 	' Helper function to update global start or end date if needed
 	Private Function UpdateGlobalDateIfNeeded(newDate As DateTimeOffset, isStartDate As Boolean) As Boolean
 		If isStartDate Then
