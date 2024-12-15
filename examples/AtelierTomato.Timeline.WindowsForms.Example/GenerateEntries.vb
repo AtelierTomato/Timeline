@@ -24,9 +24,8 @@ Public Class GenerateEntries
 		' Generate entries
 		Dim newEntries As New List(Of TimelineEntry)()
 		Dim currentID As Integer = 1
-		Dim generatedCount As Integer = 0
 
-		While generatedCount < numEntries
+		For i As Integer = 1 To numEntries
 			' Skip existing IDs
 			While Entries.Any(Function(en) en.ID = currentID.ToString())
 				currentID += 1
@@ -50,10 +49,9 @@ Public Class GenerateEntries
 			Dim newEntry = New TimelineEntry(currentID.ToString(), name, startDate, endDate)
 			newEntries.Add(newEntry)
 
-			' Increment counters
-			generatedCount += 1
+			' Increment ID counter
 			currentID += 1
-		End While
+		Next
 
 		' Append to the main list
 		Entries.AddRange(newEntries)

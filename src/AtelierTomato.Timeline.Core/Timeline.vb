@@ -64,7 +64,9 @@
 
 	' Add multiple entries
 	Public Sub AddEntries(entries As IEnumerable(Of TimelineEntry))
-		If Not entries.Any() Then Return
+		If Not entries.Any() Then
+			Throw New ArgumentException($"No entries were found in provided IEnumerable.", NameOf(entries))
+		End If
 
 		' Check for duplicate IDs in both existing entries and new entries
 		Dim allEntries = _entries.Concat(entries.ToList())

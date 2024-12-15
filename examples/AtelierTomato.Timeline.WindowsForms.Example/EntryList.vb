@@ -99,9 +99,13 @@ Public Class EntryList
 	End Sub
 
 	Private Sub btnShowTimeline_Click(sender As Object, e As EventArgs) Handles btnShowTimeline.Click
-		Dim timelineForm As New TimelineForm(Entries)
-		timelineForm.ShowDialog()
-		RefreshEntries()
+		If Not Entries.Count = 0 Then
+			Dim timelineForm As New TimelineForm(Entries)
+			timelineForm.ShowDialog()
+			RefreshEntries()
+		Else
+			MessageBox.Show("Please add at least one entry before generating a timeline.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+		End If
 	End Sub
 
 	Private Sub mnuFileExit_Click(sender As Object, e As EventArgs) Handles mnuFileExit.Click
